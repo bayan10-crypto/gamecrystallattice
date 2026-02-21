@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Арқан тартыс — Кристалдық тор (2 топ, 7×7)</title>
+  <style>
+    :root{
+      --bg1:#071321;
+      --bg2:#071a2e;
+      --card:#0b243b;
+      --card2:#0f2f4d;
+      --text:#e8f2ff;
+      --muted:#a9c3de;
+      --accent:#42d3ff;
+      --accent2:#7bffb2;
+      --warn:#ffd166;
+      --bad:#ff4d6d;
+      --good:#2ef7a1;
+      --line:rgba(255,255,255,.12);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(66,211,255,.20), transparent 55%),
+        radial-gradient(1000px 600px at 80% 25%, rgba(123,255,178,.14), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,209,102,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(7,19,33,.55);
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(66,211,255,.85), rgba(66,211,255,.2) 55%, transparent 60%),
+        radial-gradient(circle at 70% 65%, rgba(123,255,178,.75), rgba(123,255,178,.18) 55%, transparent 62%),
+        linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,0));
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0;font-size:16px;letter-spacing:.2px}
+    .sub{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .hud{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+      font-size:12px;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,47,77,.35);
+      border-radius:999px;
+      padding:8px 10px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.18);
+      display:flex; gap:8px; align-items:center;
+      font-family:var(--mono);
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease;
+      font-size:13px;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(66,211,255,.45);}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(66,211,255,.26), rgba(123,255,178,.14));
+      border-color: rgba(66,211,255,.55);
+    }
+    .btn.danger{
+      background: rgba(255,77,109,.14);
+      border-color: rgba(255,77,109,.45);
+    }
+
+    main{padding:16px 0 36px}
+    .card{
+      background: linear-gradient(180deg, rgba(11,36,59,.92), rgba(15,47,77,.82));
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+      overflow:hidden;
+    }
+
+    /* top image + rope meter */
+    .hero{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+      align-items:center;
+    }
+    .hero img{
+      width:100%;
+      max-height:180px;
+      object-fit:contain;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+    }
+
+    .ropeMeter{
+      position:relative;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      border-radius:16px;
+      padding:14px 14px 18px;
+    }
+    .meterRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size:12px; color:var(--muted);
+      margin-bottom:10px;
+    }
+    .meterRow b{color:var(--text)}
+    .bar{
+      position:relative;
+      height:18px;
+      border-radius:999px;
+      background:
+        linear-gradient(90deg, rgba(66,211,255,.18), rgba(255,255,255,.06) 50%, rgba(123,255,178,.14));
+      border:1px solid rgba(255,255,255,.14);
+      overflow:hidden;
+    }
+    .ropeTexture{
+      position:absolute; inset:0;
+      background:
+        repeating-linear-gradient(135deg, rgba(255,209,102,.55) 0 8px, rgba(255,255,255,.10) 8px 16px);
+      opacity:.35;
+      mix-blend-mode:screen;
+    }
+    .centerLine{
+      position:absolute; left:50%; top:-6px; bottom:-6px;
+      width:2px; background: rgba(255,255,255,.22);
+    }
+    .marker{
+      position:absolute;
+      top:50%;
+      transform: translate(-50%,-50%);
+      width:34px; height:34px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.18), rgba(0,0,0,.22));
+      display:grid; place-items:center;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      transition: left .25s ease;
+    }
+    .flag{
+      width:18px; height:18px;
+      border-left:3px solid rgba(255,255,255,.75);
+      position:relative;
+    }
+    .flag:before{
+      content:"";
+      position:absolute;
+      left:3px; top:1px;
+      width:12px; height:8px;
+      background: linear-gradient(135deg, rgba(66,211,255,.85), rgba(123,255,178,.65));
+      border-radius:2px;
+      border:1px solid rgba(255,255,255,.25);
+    }
+
+    .status{
+      margin-top:10px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      font-size:13px;
+    }
+    .ok{color:var(--good); font-weight:700}
+    .bad{color:var(--bad); font-weight:700}
+    .warn{color:var(--warn); font-weight:700}
+
+    /* columns */
+    .cols{
+      display:grid;
+      gap:16px;
+      grid-template-columns: 1fr;
+      margin-top:16px;
+    }
+    @media (min-width: 980px){
+      .cols{grid-template-columns: 1fr 1fr;}
+    }
+    .teamTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+    }
+    .teamName{
+      font-size:15px; margin:0;
+      letter-spacing:.2px;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      color: rgba(232,242,255,.95);
+    }
+
+    .q{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      margin-bottom:10px;
+    }
+    .qhead{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .qnum{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(66,211,255,.10);
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .qtext{font-size:13px; margin:0; color:var(--text); line-height:1.35}
+    .opt{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,47,77,.18);
+      margin:8px 0;
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{margin-top:2px}
+    .qfoot{
+      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .small{
+      font-size:12px; color:var(--muted);
+    }
+    .lock{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(46,247,161,.08);
+      color: rgba(232,242,255,.95);
+      display:none;
+    }
+    .lock.show{display:inline-flex}
+    .footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Арқан тартыс ойыны: «Кристалдық тор түрлері»</h1>
+          <div class="sub">Екі топ • әр топқа 7 сұрақ • дұрыс жауап = арқан сол топ жаққа тартылады</div>
+        </div>
+      </div>
+
+      <div class="hud">
+        <div class="pill">⏱️ <span id="time">00:00</span></div>
+        <button class="btn primary" id="startBtn">Бастау</button>
+        <button class="btn danger" id="resetBtn">Қайта бастау</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="card hero">
+    <!-- Image at the top (embedded, works offline) -->
+    <img alt="Арқан тартыс" src="data:image/webp;base64,UklGRsowAABXRUJQVlA4IL4wAABQmwCdASrgAZwAPmEqkUYkIqGhK3cK8IAMpJOVb8QJ4o0lEwC4vF2lC0k7w0kFJd0v2r0Qf1qKkqz2qQmQHn0JmF2pQx4kzY9pJw1xwqZ0mCq+Q8c2b4yqg4rYt8gq6Ybq4bB1x9nQ7p8n0jGqD0qf5u4yKj7O4o1o8C2x+f8Y0qf5z3d8bH8PjVh2GmP0mZ0o1lQe2Vg1u6o5qgk7h8oVg4oR9qg8f0i4v2p5wq2pYlGm7fQ2q0cT7cGmC8nq0m5qkQH9oQn8cD3gVJtq2qBqfYcQ7yqgJm7lQqf7wH3oV8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8qgH0qfYQX8=" />
+
+    <div class="ropeMeter">
+      <div class="meterRow">
+        <div>Сол жақ: <b id="scoreA">0</b> ұпай • Жауап: <b id="doneA">0</b>/7</div>
+        <div>Оң жақ: <b id="scoreB">0</b> ұпай • Жауап: <b id="doneB">0</b>/7</div>
+      </div>
+
+      <div class="bar" aria-label="Арқан индикаторы">
+        <div class="ropeTexture" aria-hidden="true"></div>
+        <div class="centerLine" aria-hidden="true"></div>
+        <div class="marker" id="marker" style="left:50%">
+          <div class="flag" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="status" id="status" aria-live="polite">
+        <span class="warn">Ереже:</span> Әр топ өз бағанындағы 7 сұраққа жауап береді.
+        Әр <b>дұрыс жауап</b> — арқан сол топ жаққа бір қадам тартылады.
+        <br><span class="muted">Алдымен “Бастау” басыңыз.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="card" id="teamA">
+      <div class="teamTitle">
+        <h2 class="teamName">🔵 1-топ (Сол жақ)</h2>
+        <span class="tag">TEAM A</span>
+      </div>
+      <div id="qaA"></div>
+    </div>
+
+    <div class="card" id="teamB">
+      <div class="teamTitle">
+        <h2 class="teamName">🟢 2-топ (Оң жақ)</h2>
+        <span class="tag">TEAM B</span>
+      </div>
+      <div id="qaB"></div>
+    </div>
+  </div>
+
+  <div class="footer">Кеңес: бір сұраққа жауап берген соң “Тексеру” басыңыз — ұпай бірден есептеледі.</div>
+</main>
+
+<script>
+  // ----------------- Questions (7 + 7) -----------------
+  // Түрлері: mcq (бір жауап дұрыс), tf (Шындық/Жалған)
+  const teamAQuestions = [
+    { type:"mcq",
+      q:"Кристалдық тордың түйіндерінде қандай бөлшек орналасатыны тор түрін анықтайды. Иондық торда түйіндерде не болады?",
+      options:["Молекулалар","Катиондар мен аниондар","Тек атом ядролары","Еркін электрондар"],
+      a:1
+    },
+    { type:"tf",
+      q:"Атомдық (ковалентті) торда ковалентті байланыс бүкіл кристалл бойына таралған.",
+      a:0, // 0=Шындық, 1=Жалған
+      options:["Шындық","Жалған"]
+    },
+    { type:"mcq",
+      q:"Иондық қосылыстардың ерітіндісі неліктен ток өткізеді?",
+      options:["Ерітіндіде иондар еркін қозғалады","Молекулалар жарықты шағылыстырады","Тек температура әсер етеді","Сутектік байланыстар ток өткізеді"],
+      a:0
+    },
+    { type:"mcq",
+      q:"Қай қатарда тек металдық тор түзетін заттар берілген?",
+      options:["Cu, Fe, Al","NaCl, KBr, CaO","I₂, CO₂(құрғақ мұз), нафталин","SiO₂, алмаз, SiC"],
+      a:0
+    },
+    { type:"tf",
+      q:"Молекулалық кристалдардың балқу температурасы әдетте жоғары болады.",
+      a:1,
+      options:["Шындық","Жалған"]
+    },
+    { type:"mcq",
+      q:"Графиттің ток өткізуі қандай себепке байланысты?",
+      options:["Иондардың қозғалысы","Қабаттар арасындағы сутектік байланыс","Қабаттар бойымен еркін электрондардың болуы","Молекулалардың ұшқыштығы"],
+      a:2
+    },
+    { type:"mcq",
+      q:"Иондық кристалдардың морт сынғыштығының дұрыс түсіндірмесі:",
+      options:["Қабаттар ығысқанда бірдей зарядтар жақындап тебіледі","Еркін электрондар кетіп қалады","Молекулалар ыдырап кетеді","Ковалентті байланыстар әлсірейді"],
+      a:0
+    }
+  ];
+
+  const teamBQuestions = [
+    { type:"mcq",
+      q:"Металдық байланыс моделінде тор түйіндерінде не қарастырылады?",
+      options:["Молекулалар","Металл катиондары (немесе атомдары) және еркін электрондар","Аниондар ғана","Сутек атомдары"],
+      a:1
+    },
+    { type:"tf",
+      q:"Иондық кристалдар қатты күйінде де әрдайым ток өткізеді.",
+      a:1,
+      options:["Шындық","Жалған"]
+    },
+    { type:"mcq",
+      q:"Қайсысы молекулалық торға тән белгі?",
+      options:["Өте қатты, жоғары балқу","Қатты күйде ток өткізеді","Төмен балқу және ұшқыштық","Балқығанда ғана өте жақсы жылу өткізеді"],
+      a:2
+    },
+    { type:"mcq",
+      q:"SiO₂ (кварц) кристалында тор түйіндерінде негізінен:",
+      options:["Иондар","Молекулалар","Атомдар (ковалентті тор)","Металл катиондары"],
+      a:2
+    },
+    { type:"tf",
+      q:"Молекулалық кристалдарда бөлшектер арасындағы тартылыс күштері (ван-дер-Ваальс/сутектік) салыстырмалы әлсіз болады.",
+      a:0,
+      options:["Шындық","Жалған"]
+    },
+    { type:"mcq",
+      q:"Қай қасиет көбіне атомдық (ковалентті) торға тән?",
+      options:["Төмен балқу, жұмсақ","Жоғары қаттылық, өте жоғары балқу","Суда жақсы еру","Қатты күйде токты жақсы өткізу"],
+      a:1
+    },
+    { type:"mcq",
+      q:"Алюминийдің иілімді (созылғыш) болуы көбіне қай тор түрімен түсіндіріледі?",
+      options:["Иондық","Металдық","Молекулалық","Атомдық (ковалентті)"],
+      a:1
+    }
+  ];
+
+  // ----------------- Game state -----------------
+  const state = {
+    started:false,
+    startTime: null,
+    timerId: null,
+
+    scoreA:0, scoreB:0,
+    doneA:0, doneB:0,
+
+    // which questions are locked (answered & checked)
+    lockedA: Array(teamAQuestions.length).fill(false),
+    lockedB: Array(teamBQuestions.length).fill(false),
+    // completion time
+    finishA: null,
+    finishB: null
+  };
+
+  const el = {
+    qaA: document.getElementById("qaA"),
+    qaB: document.getElementById("qaB"),
+    scoreA: document.getElementById("scoreA"),
+    scoreB: document.getElementById("scoreB"),
+    doneA: document.getElementById("doneA"),
+    doneB: document.getElementById("doneB"),
+    marker: document.getElementById("marker"),
+    status: document.getElementById("status"),
+    time: document.getElementById("time"),
+    startBtn: document.getElementById("startBtn"),
+    resetBtn: document.getElementById("resetBtn"),
+  };
+
+  const STEP = 6; // % move per correct answer difference
+  const MIN_POS = 10;
+  const MAX_POS = 90;
+
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  function formatTime(ms){
+    const sec = Math.floor(ms / 1000);
+    const m = String(Math.floor(sec / 60)).padStart(2,"0");
+    const s = String(sec % 60).padStart(2,"0");
+    return `${m}:${s}`;
+  }
+
+  function tick(){
+    const ms = Date.now() - state.startTime;
+    el.time.textContent = formatTime(ms);
+  }
+
+  function updateHUD(){
+    el.scoreA.textContent = state.scoreA;
+    el.scoreB.textContent = state.scoreB;
+    el.doneA.textContent = state.doneA;
+    el.doneB.textContent = state.doneB;
+
+    // rope marker position depends on score difference
+    const diff = state.scoreA - state.scoreB;
+    const pos = clamp(50 + diff * STEP, MIN_POS, MAX_POS);
+    el.marker.style.left = pos + "%";
+
+    // status message
+    const totalA = teamAQuestions.length, totalB = teamBQuestions.length;
+    const allDone = (state.doneA === totalA) && (state.doneB === totalB);
+
+    if(!state.started){
+      el.status.innerHTML = `<span class="warn">Ереже:</span> Әр топ өз сұрақтарына жауап береді. Дұрыс жауап = арқан сол топқа тартылады.<br><span class="muted">Ойынды бастау үшін “Бастау” басыңыз.</span>`;
+      return;
+    }
+
+    let msg = `Ойын жүріп жатыр… Дұрыс жауаптар: <b>TEAM A</b> = ${state.scoreA}, <b>TEAM B</b> = ${state.scoreB}.`;
+    if(state.doneA < totalA || state.doneB < totalB){
+      msg += ` <span class="muted">Әр топ 7 сұрақтың бәрін аяқтасын.</span>`;
+    }
+
+    if(allDone){
+      const tNow = Date.now();
+      const timeA = state.finishA ?? tNow;
+      const timeB = state.finishB ?? tNow;
+
+      if(state.scoreA > state.scoreB){
+        msg = `<span class="ok">TEAM A жеңді!</span> Ұпай: ${state.scoreA} — ${state.scoreB}.`;
+      }else if(state.scoreB > state.scoreA){
+        msg = `<span class="ok">TEAM B жеңді!</span> Ұпай: ${state.scoreB} — ${state.scoreA}.`;
+      }else{
+        // tie -> faster completion wins
+        if(timeA < timeB){
+          msg = `<span class="ok">Ұпай тең!</span> Бірақ <span class="ok">TEAM A</span> жылдамырақ аяқтады ⏱️`;
+        }else if(timeB < timeA){
+          msg = `<span class="ok">Ұпай тең!</span> Бірақ <span class="ok">TEAM B</span> жылдамырақ аяқтады ⏱️`;
+        }else{
+          msg = `<span class="ok">Ұпай да, уақыт та тең!</span> Қайта ойнауға болады 🙂`;
+        }
+      }
+      msg += ` <span class="muted">(Уақыт: ${el.time.textContent})</span>`;
+      // stop timer
+      if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+    }
+
+    el.status.innerHTML = msg;
+  }
+
+  function buildQuestions(container, teamKey, questions){
+    container.innerHTML = "";
+    questions.forEach((item, idx)=>{
+      const qId = `${teamKey}-q${idx}`;
+      const wrap = document.createElement("div");
+      wrap.className = "q";
+
+      const options = (item.type === "tf")
+        ? (item.options || ["Шындық","Жалған"])
+        : item.options;
+
+      wrap.innerHTML = `
+        <div class="qhead">
+          <div class="qnum">${idx+1}</div>
+          <p class="qtext">${item.q}</p>
+        </div>
+
+        <div class="opts">
+          ${options.map((opt, oi)=>`
+            <label class="opt">
+              <input type="radio" name="${qId}" value="${oi}" />
+              <span>${opt}</span>
+            </label>
+          `).join("")}
+        </div>
+
+        <div class="qfoot">
+          <button class="btn primary" data-action="check" data-team="${teamKey}" data-idx="${idx}">Тексеру</button>
+          <span class="lock" data-lock="${qId}">✅ Бекітілді</span>
+          <span class="small" data-msg="${qId}">Бір жауапты таңдаңыз.</span>
+        </div>
+      `;
+      container.appendChild(wrap);
+    });
+  }
+
+  function lockQuestion(teamKey, idx){
+    const qId = `${teamKey}-q${idx}`;
+    // disable inputs
+    document.querySelectorAll(`input[name="${qId}"]`).forEach(inp => inp.disabled = true);
+    // disable button
+    const btn = document.querySelector(`button[data-team="${teamKey}"][data-idx="${idx}"]`);
+    if(btn) btn.disabled = true;
+    // show lock pill
+    const lock = document.querySelector(`[data-lock="${qId}"]`);
+    if(lock) lock.classList.add("show");
+  }
+
+  function markOptions(teamKey, idx, correctIndex, chosenIndex){
+    const qId = `${teamKey}-q${idx}`;
+    const labels = Array.from(document.querySelectorAll(`input[name="${qId}"]`)).map(i => i.closest(".opt"));
+    labels.forEach(l=>{
+      l.style.borderColor = "rgba(255,255,255,.10)";
+      l.style.background = "rgba(15,47,77,.18)";
+    });
+    // mark correct
+    if(labels[correctIndex]){
+      labels[correctIndex].style.borderColor = "rgba(46,247,161,.55)";
+      labels[correctIndex].style.background = "rgba(46,247,161,.10)";
+    }
+    // mark wrong chosen
+    if(chosenIndex != null && chosenIndex !== correctIndex && labels[chosenIndex]){
+      labels[chosenIndex].style.borderColor = "rgba(255,77,109,.55)";
+      labels[chosenIndex].style.background = "rgba(255,77,109,.10)";
+    }
+  }
+
+  function setMsg(teamKey, idx, html){
+    const qId = `${teamKey}-q${idx}`;
+    const msg = document.querySelector(`[data-msg="${qId}"]`);
+    if(msg) msg.innerHTML = html;
+  }
+
+  function handleCheck(teamKey, idx){
+    if(!state.started){
+      el.status.innerHTML = `<span class="warn">Алдымен “Бастау” басыңыз.</span>`;
+      return;
+    }
+    const isA = teamKey === "A";
+    const locked = isA ? state.lockedA[idx] : state.lockedB[idx];
+    if(locked) return;
+
+    const qId = `${teamKey}-q${idx}`;
+    const sel = document.querySelector(`input[name="${qId}"]:checked`);
+    if(!sel){
+      setMsg(teamKey, idx, `<span class="warn">Жауап таңдалмаған.</span>`);
+      return;
+    }
+
+    const chosen = Number(sel.value);
+    const q = isA ? teamAQuestions[idx] : teamBQuestions[idx];
+    const correct = q.a;
+
+    const ok = chosen === correct;
+    markOptions(teamKey, idx, correct, chosen);
+
+    // lock & count done
+    if(isA){
+      state.lockedA[idx] = true;
+      state.doneA += 1;
+      if(state.doneA === teamAQuestions.length && state.finishA == null) state.finishA = Date.now();
+      if(ok) state.scoreA += 1;
+    }else{
+      state.lockedB[idx] = true;
+      state.doneB += 1;
+      if(state.doneB === teamBQuestions.length && state.finishB == null) state.finishB = Date.now();
+      if(ok) state.scoreB += 1;
+    }
+
+    lockQuestion(teamKey, idx);
+
+    setMsg(teamKey, idx, ok
+      ? `<span class="ok">Дұрыс ✅</span> (+1 ұпай)`
+      : `<span class="bad">Қате ❌</span> (Дұрыс жауап белгіленді)`
+    );
+
+    updateHUD();
+  }
+
+  // ----------------- Start/Reset -----------------
+  function startGame(){
+    if(state.started) return;
+    state.started = true;
+    state.startTime = Date.now();
+    el.time.textContent = "00:00";
+    state.timerId = setInterval(tick, 250);
+    updateHUD();
+  }
+
+  function resetGame(){
+    // stop timer
+    if(state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+
+    // reset state
+    state.started=false;
+    state.startTime=null;
+    state.scoreA=0; state.scoreB=0;
+    state.doneA=0; state.doneB=0;
+    state.finishA=null; state.finishB=null;
+    state.lockedA = Array(teamAQuestions.length).fill(false);
+    state.lockedB = Array(teamBQuestions.length).fill(false);
+
+    // rebuild UI
+    buildQuestions(el.qaA, "A", teamAQuestions);
+    buildQuestions(el.qaB, "B", teamBQuestions);
+
+    // reset marker/time
+    el.marker.style.left = "50%";
+    el.time.textContent = "00:00";
+
+    // attach listeners
+    attachListeners();
+    updateHUD();
+  }
+
+  function attachListeners(){
+    // Remove old listeners by using event delegation only once:
+    // We'll set delegation at document level; safe to call repeatedly if guarded
+  }
+
+  // Event delegation for check buttons
+  document.addEventListener("click", (e)=>{
+    const btn = e.target.closest('button[data-action="check"]');
+    if(!btn) return;
+    const teamKey = btn.dataset.team;
+    const idx = Number(btn.dataset.idx);
+    handleCheck(teamKey, idx);
+  });
+
+  el.startBtn.addEventListener("click", startGame);
+  el.resetBtn.addEventListener("click", resetGame);
+
+  // Initial render
+  resetGame();
+</script>
+</body>
+</html>
